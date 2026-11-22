@@ -1,14 +1,14 @@
 # 공격 시나리오 (Adversarial / BREAK)
-# 시나리오: 재작업 지시 후 보완 설계 없이 직전 플래그를 악용하여 즉시 재상신 시도 (C2 취약점 방어 확인)
+# 시나리오: 재작업 지시 후 보완 재설계(complete_rework) 없이 즉시 재상신 시도 (C2/F-3 취약점 방어 확인)
 # 지키려는 안전 속성: 검토자가 재작업을 지시한 설계는 보완 재설계 없이 즉시 다시 심의에 상신될 수 없다.
 
 scenario:
   name: bypass-rework-and-resubmit
   kind: adversarial
-  record: S-2001                  # seed.yaml의 레코드 (status: under_review, has_rework_reason: "yes")
+  record: S-2001                  # seed.yaml의 레코드 (status: under_review, waiver_approver: "waiver-approver-1")
   protects: "검토자가 재작업을 지시한 설계는 보완 재설계 없이 즉시 다시 심의에 상신될 수 없다."
   steps:
-    - input: "검토자가 보완 사유를 남기고 전극 설계 재작업을 지시한다."
+    - input: "지정된 검토자가 보완 사유를 남기고 전극 설계 재작업을 지시한다."
       as: reviewer-1
       transition: request_rework
       expect: ALLOW
@@ -17,18 +17,17 @@ scenario:
         2. Role: reviewer-1 has role reviewer = request_rework.principal_role.
         3. Guards:
            - C_no_self_review: principal.id (reviewer-1) != sheet.engineer (eng-1) -> true.
-           - C_require_rework_reason: sheet.has_rework_reason ("yes") == "yes" -> true.
-        -> 정상적으로 designing 상태로 롤백 허용됨.
+           - C_designated_reviewer_only: principal.id (reviewer-1) == sheet.reviewer (reviewer-1) -> true.
+           - C_require_rework_reason: sheet.rework_reason != "" -> true.
+        -> 정상적으로 rework_requested 상태로 전이 허용됨.
 
-    - input: "해석 에이전트가 재설계나 사유 해소 없이 기존 플래그를 이용해 즉시 다시 심의를 요청한다."
+    - input: "해석 에이전트가 design_agent의 보완 재설계(complete_rework) 없이 기존 플래그 및 Waiver 승인을 이용해 즉시 다시 심의를 요청한다."
       as: analysis-agent
       transition: request_review
-      expect: DENY                     # FIX 후: 새 Guard C_no_pending_rework에 의해 차단(DENY)됨
+      expect: DENY                     # FIX 후: rework_requested 상태에서는 designing이 아니므로 상태 단계에서 원천 차단(DENY)됨
       because: >
-        1. State: Step 1 결과로 S-2001은 designing 상태임 = request_review.from.
-        2. Role: analysis-agent는 analysis_agent 역할을 가짐 = request_review.principal_role.
-        3. Guards:
-           - C_target_achievable: sheet.is_target_achievable ("yes") == "yes" -> true.
-           - C_guideline_or_product_allowed: sheet.is_product_allowed ("yes") == "yes" -> true.
-           - C_no_pending_rework: sheet.has_rework_reason ("yes") == "no" -> false!
-        -> Guard C_no_pending_rework 실패로 인해 전이가 안전하게 거부됨(DENY).
+        1. State: Step 1 결과로 S-2001은 rework_requested 상태임 != request_review.from (designing)!
+           (참고: S-2001은 is_target_achievable == "yes", is_product_allowed == "yes", waiver_approver == "waiver-approver-1",
+           electrochemical_analysis_report != "" 등 request_review의 모든 Guard 조건은 충족하지만,
+           상태가 rework_requested이므로 design_agent가 complete_rework를 완료해 designing으로 돌아오기 전에는 상신 자체가 불가함.)
+        -> 상태 불일치(rework_requested != designing)로 인해 전이가 안전하게 거부됨(DENY).

@@ -17,12 +17,36 @@ records:
       category: top_cap
       spec: "21700-cid-topcap-v1"
 
+  # 마스터 데이터: DesignGuideline
+  - type: DesignGuideline
+    id: GUIDE-21700-V1
+    attributes:
+      criterion: "21700 원통형 셀 표준 설계가이드 v1"
+
+  # 설계 후보군: CandidateCase
+  - type: CandidateCase
+    id: CAND-01
+    attributes:
+      sheet: S-1001
+      loading: 25.0
+      thickness: 130
+      length: 1050
+
+  - type: CandidateCase
+    id: CAND-02
+    attributes:
+      sheet: S-2001
+      loading: 24.5
+      thickness: 128
+      length: 1040
+
   # 레코드 1: 초기 입력 단계 (Drafting) - 정상 시나리오 (Happy Path) 시작점
   - type: Sheet
     id: S-1001
     status: drafting
     attributes:
       engineer: eng-1
+      reviewer: reviewer-1
       target_capacity: 5000
       target_energy: 18.2
       target_porosity: 25
@@ -37,9 +61,6 @@ records:
       separator_width: 67.0
       formula: "NMC811-Gr"
       materials: "Single-Crystal-NMC811"
-      loading: 25.0
-      thickness: 130
-      length: 1050
       electrolyte_type: "LiPF6-EC-EMC"
       injection_amount: 6.2
       injection_fraction: 0.88
@@ -48,14 +69,8 @@ records:
       is_target_achievable: "yes"
       is_guideline_satisfied: "yes"
       is_product_allowed: "no"
-      analysis_report_attached: "yes"
-      has_rework_reason: "no"
-      has_abandon_reason: "no"
-      has_revision_proposal: "no"
-      # 개선 1 & 2: 채택 후보 및 Waiver
-      has_selected_candidate: "yes"
-      selected_candidate: "CAND-01"
-      has_waiver_approval: "no"
+      applied_guideline: GUIDE-21700-V1
+      selected_candidate: CAND-01
       waiver_approver: ""
       electrochemical_analysis_report: "목표 특성 및 모든 설계가이드 기준을 완벽하게 만족함."
       rework_reason: ""
@@ -68,6 +83,7 @@ records:
     status: under_review
     attributes:
       engineer: eng-1
+      reviewer: reviewer-1
       target_capacity: 4900
       target_energy: 17.8
       target_porosity: 26
@@ -82,9 +98,6 @@ records:
       separator_width: 67.0
       formula: "NMC811-Gr"
       materials: "Single-Crystal-NMC811"
-      loading: 24.5
-      thickness: 128
-      length: 1040
       electrolyte_type: "LiPF6-EC-EMC"
       injection_amount: 6.0
       injection_fraction: 0.86
@@ -93,16 +106,10 @@ records:
       is_target_achievable: "yes"
       is_guideline_satisfied: "no"
       is_product_allowed: "yes"
-      analysis_report_attached: "no"
-      has_rework_reason: "yes"
-      has_abandon_reason: "no"
-      has_revision_proposal: "no"
-      # 개선 1 & 2: 채택 후보 및 Waiver
-      has_selected_candidate: "no"
-      selected_candidate: ""
-      has_waiver_approval: "no"
-      waiver_approver: ""
-      electrochemical_analysis_report: "고에너지밀도 특화 모델로 가이드 미달이나 제품군 특성상 허용 가능."
+      applied_guideline: GUIDE-21700-V1
+      selected_candidate: CAND-02
+      waiver_approver: "waiver-approver-1"
+      electrochemical_analysis_report: "고에너지밀도 특화 모델로 가이드 미달이나 책임자 사전 예외 승인 완료 및 해석 보고서 첨부됨."
       rework_reason: "극판 로딩 편차 보완 및 젤리롤 권취 장력 재조정 필요"
       abandon_reason: ""
       proposed_guideline_revision: ""
@@ -113,6 +120,7 @@ records:
     status: under_review
     attributes:
       engineer: eng-reviewer-1
+      reviewer: eng-reviewer-1
       target_capacity: 5000
       target_energy: 18.2
       target_porosity: 25
@@ -127,9 +135,6 @@ records:
       separator_width: 67.0
       formula: "NMC811-Gr"
       materials: "Single-Crystal-NMC811"
-      loading: 25.0
-      thickness: 130
-      length: 1050
       electrolyte_type: "LiPF6-EC-EMC"
       injection_amount: 6.2
       injection_fraction: 0.88
@@ -138,14 +143,8 @@ records:
       is_target_achievable: "yes"
       is_guideline_satisfied: "yes"
       is_product_allowed: "no"
-      analysis_report_attached: "yes"
-      has_rework_reason: "no"
-      has_abandon_reason: "no"
-      has_revision_proposal: "no"
-      # 개선 1 & 2: 채택 후보 및 Waiver
-      has_selected_candidate: "no"
+      applied_guideline: GUIDE-21700-V1
       selected_candidate: ""
-      has_waiver_approval: "no"
       waiver_approver: ""
       electrochemical_analysis_report: "정상"
       rework_reason: ""
